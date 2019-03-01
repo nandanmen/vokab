@@ -1,9 +1,11 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-import { Hello } from './components/Hello';
+import { Text, View, TextInput } from 'react-native';
+import Translator from './components/Translator';
 
-export default () => (
-  <View style={{ marginTop: 50 }}>
-    <Hello name="Nan" enthusiasmLevel={5} />
-  </View>
-);
+export default () => {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Translator />
+    </View>
+  );
+};
