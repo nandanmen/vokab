@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, TextInput } from 'react-native';
 import LanguageOption from './LanguageOption';
-import { translate } from '../client';
+import translate from '../client';
+import { TranslationInfo } from '../client/types';
 
 enum Languages {
   Russian = 'ru',
@@ -13,17 +14,17 @@ const LANG_OPTIONS: Languages[] = [Languages.Russian, Languages.English];
 interface State {
   language: Languages;
   input: string;
-  result: string;
+  result?: TranslationInfo;
 }
 
 export default class Translator extends Component<{}, State> {
   state: State = {
     language: Languages.Russian,
-    input: '',
-    result: ''
+    input: ''
   };
 
   public render() {
+    const { result } = this.state;
     return (
       <View style={styles.root}>
         <View style={styles.langOpts}>
@@ -44,7 +45,11 @@ export default class Translator extends Component<{}, State> {
           onChangeText={text => this.setState({ input: text })}
           onSubmitEditing={this._handleSubmit}
         />
-        <Text style={{ color: 'white' }}>{this.state.result}</Text>
+        {result ? (
+          <View>
+            <Text style={{ color: 'white' }}>{result.toString()}</Text>
+          </View>
+        ) : null}
       </View>
     );
   }
@@ -58,7 +63,7 @@ export default class Translator extends Component<{}, State> {
       language === Languages.Russian ? Languages.English : Languages.Russian;
 
     translate(language, to, input)
-      .then(res => this.setState({ result: res![0] }))
+      .then(res => this.setState({ result: res }))
       .catch(err => console.error(err));
   };
 }

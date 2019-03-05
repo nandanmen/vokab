@@ -1,46 +1,68 @@
 import axios from 'axios';
-import config from '../../config';
-import { Translation } from './types';
-
-const INTERVAL = 480000; // 8 mins in ms, 2 mins before token expires
+import { url } from '../../config';
+import {
+  Response,
+  TextResponse,
+  TranslationInfo,
+  TranslationResponse,
+  Translation
+} from './types';
 
 const http = axios.create();
 
-let token: string | null;
-
-export async function requestToken() {
-  token = null;
-  const headers = {
-    'Ocp-Apim-Subscription-Key': config.secret
+export default async function translate(
+  from: string,
+  to: string,
+  text: string
+) {
+  const params = {
+    lang: `${from}-${to}`,
+    text
   };
   try {
-    const res = await http.post(config.authUrl, null, { headers });
-    token = res.data;
+    const res = await http.post(url, null, { params });
+    const translation: Response = res.data.def[0];
+    return parse(translation);
   } catch (err) {
     console.error(err);
   }
 }
 
-export async function translate(from: string, to: string, ...texts: string[]) {
-  if (!token) await requestToken();
-  const headers = {
-    authorization: `Bearer ${token}`
+function parse(res: Response): TranslationInfo {
+  const input = res.text;
+  const pos = res.pos;
+
+  const translations = res.tr.map(parseTranslation);
+  console.log(translations);
+  return { input, pos, translations };
+}
+
+function parseTranslation(res: TranslationResponse) {
+  const { text, pos, mean, syn, ex } = res;
+
+  const result: Translation = {
+    translation: text,
+    pos
   };
-  const data = texts.map(text => {
-    return { text };
-  });
-  try {
-    const res = await http.post(config.baseUrl, data, {
-      headers,
-      params: {
-        from,
-        to
-      }
+
+  if (mean) {
+    result.meanings = flatten(mean);
+  }
+
+  if (syn) {
+    result.synonyms = syn;
+  }
+
+  if (ex) {
+    result.examples = ex.map(example => {
+      return {
+        text: example.text,
+        translation: flatten(example.tr)[0]
+      };
     });
-    console.log(res.data);
-    const translations: Translation[] = res.data[0].translations;
-    return translations.map(res => res.text);
-  } catch (err) {
-    console.error(err);
   }
+
+  return result;
 }
+
+const flatten = (arr: TextResponse[]) => arr.map(tx => tx.text);
