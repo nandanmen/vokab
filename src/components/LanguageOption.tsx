@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 export interface Props {
@@ -8,12 +8,7 @@ export interface Props {
   isActive: boolean;
 }
 
-const LanguageOption: React.FC<Props> = ({
-  name,
-  index,
-  onPress,
-  isActive
-}) => (
+const LanguageOption: FC<Props> = ({ name, index, onPress, isActive }) => (
   <TouchableOpacity onPress={() => onPress(index)}>
     <Text
       style={isActive ? [styles.button, styles.activeButton] : styles.button}
@@ -22,8 +17,6 @@ const LanguageOption: React.FC<Props> = ({
     </Text>
   </TouchableOpacity>
 );
-
-// styles
 
 const styles = StyleSheet.create({
   button: {

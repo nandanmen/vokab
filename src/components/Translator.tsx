@@ -1,21 +1,26 @@
-import React from 'react';
-import { StyleSheet, View, TextInput } from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, View, Text, TextInput } from 'react-native';
 import LanguageOption from './LanguageOption';
+import { translate } from '../client';
 
 enum Languages {
-  Russian = 'rus',
-  English = 'eng'
+  Russian = 'ru',
+  English = 'en'
 }
 
 const LANG_OPTIONS: Languages[] = [Languages.Russian, Languages.English];
 
 interface State {
   language: Languages;
+  input: string;
+  result: string;
 }
 
-export default class Translator extends React.Component<{}, State> {
+export default class Translator extends Component<{}, State> {
   state: State = {
-    language: Languages.Russian
+    language: Languages.Russian,
+    input: '',
+    result: ''
   };
 
   public render() {
@@ -32,16 +37,31 @@ export default class Translator extends React.Component<{}, State> {
             />
           ))}
         </View>
-        <TextInput style={styles.input} placeholder="Type here" />
+        <TextInput
+          style={styles.input}
+          placeholder="Type here"
+          value={this.state.input}
+          onChangeText={text => this.setState({ input: text })}
+          onSubmitEditing={this._handleSubmit}
+        />
+        <Text style={{ color: 'white' }}>{this.state.result}</Text>
       </View>
     );
   }
 
   private _handleLanguageChange = (idx: number) =>
     this.setState({ language: LANG_OPTIONS[idx] });
-}
 
-// styles
+  private _handleSubmit = () => {
+    const { language, input } = this.state;
+    const to =
+      language === Languages.Russian ? Languages.English : Languages.Russian;
+
+    translate(language, to, input)
+      .then(res => this.setState({ result: res![0] }))
+      .catch(err => console.error(err));
+  };
+}
 
 const styles = StyleSheet.create({
   root: {
