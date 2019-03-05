@@ -50,7 +50,10 @@ function parseTranslation(res: TranslationResponse) {
   }
 
   if (syn) {
-    result.synonyms = syn;
+    result.synonyms = syn.map(synonym => {
+      const { text, pos } = synonym;
+      return { text, pos };
+    });
   }
 
   if (ex) {

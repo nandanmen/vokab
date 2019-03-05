@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TextInput } from 'react-native';
+import { StyleSheet, View, ScrollView, TextInput } from 'react-native';
 import LanguageOption from './LanguageOption';
 import translate from '../client';
 import { TranslationInfo } from '../client/types';
+import Result from './Result';
 
 enum Languages {
   Russian = 'ru',
@@ -26,7 +27,18 @@ export default class Translator extends Component<{}, State> {
   public render() {
     const { result } = this.state;
     return (
-      <View style={styles.root}>
+      <ScrollView
+        style={{
+          flex: 1,
+          width: '100%',
+          backgroundColor: 'black'
+        }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: 30,
+          paddingVertical: 150
+        }}
+      >
         <View style={styles.langOpts}>
           {LANG_OPTIONS.map((lg, idx) => (
             <LanguageOption
@@ -47,10 +59,12 @@ export default class Translator extends Component<{}, State> {
         />
         {result ? (
           <View>
-            <Text style={{ color: 'white' }}>{result.toString()}</Text>
+            {result.translations.map(tr => (
+              <Result key={['tr', tr.translation].join('-')} {...tr} />
+            ))}
           </View>
         ) : null}
-      </View>
+      </ScrollView>
     );
   }
 
@@ -69,14 +83,6 @@ export default class Translator extends Component<{}, State> {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    backgroundColor: 'black',
-    flex: 1,
-    alignSelf: 'stretch',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    padding: 30
-  },
   langOpts: {
     display: 'flex',
     flexDirection: 'row',
@@ -84,7 +90,7 @@ const styles = StyleSheet.create({
   },
   input: {
     color: 'white',
-    fontSize: 40,
+    fontSize: 30,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E2',
     paddingVertical: 15

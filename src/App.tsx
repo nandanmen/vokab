@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, TextInput } from 'react-native';
+import { Text, View, TextInput, ScrollView } from 'react-native';
 import Translator from './components/Translator';
 
 export default () => {
