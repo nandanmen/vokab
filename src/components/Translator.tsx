@@ -70,6 +70,7 @@ export default class Translator extends Component<{}, State> {
     const to =
       language === Languages.Russian ? Languages.English : Languages.Russian;
 
+    delete this.state.result;
     try {
       const res = await translate(language, to, input);
       this.setState({ result: res });

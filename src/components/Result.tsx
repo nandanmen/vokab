@@ -30,9 +30,9 @@ const Result: FC<Translation> = props => {
       {examples ? (
         <View style={styles.container}>
           <Text style={[styles.text, styles.subTitle]}>Examples</Text>
-          <View style={styles.example}>
+          <View>
             {examples.map(ex => (
-              <View key={ex.text}>
+              <View key={ex.text} style={styles.example}>
                 <Text style={styles.text}>{ex.translation}</Text>
                 <Text style={[styles.text, styles.caption]}>{ex.text}</Text>
               </View>
