@@ -4,6 +4,7 @@ import LanguageOption from './LanguageOption';
 import translate from '../client';
 import { TranslationInfo } from '../client/types';
 import Result from './Result';
+import Results from './Results';
 
 enum Languages {
   Russian = 'ru',
@@ -28,16 +29,8 @@ export default class Translator extends Component<{}, State> {
     const { result } = this.state;
     return (
       <ScrollView
-        style={{
-          flex: 1,
-          width: '100%',
-          backgroundColor: 'black'
-        }}
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingHorizontal: 30,
-          paddingVertical: 150
-        }}
+        style={styles.container}
+        contentContainerStyle={styles.content}
       >
         <View style={styles.langOpts}>
           {LANG_OPTIONS.map((lg, idx) => (
@@ -57,13 +50,7 @@ export default class Translator extends Component<{}, State> {
           onChangeText={text => this.setState({ input: text })}
           onSubmitEditing={this._handleSubmit}
         />
-        {result ? (
-          <View>
-            {result.translations.map(tr => (
-              <Result key={['tr', tr.translation].join('-')} {...tr} />
-            ))}
-          </View>
-        ) : null}
+        {result ? <Results translations={result.translations} /> : null}
       </ScrollView>
     );
   }
@@ -83,6 +70,16 @@ export default class Translator extends Component<{}, State> {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: 'black'
+  },
+  content: {
+    flexGrow: 1,
+    paddingHorizontal: 40,
+    paddingVertical: 150
+  },
   langOpts: {
     display: 'flex',
     flexDirection: 'row',
