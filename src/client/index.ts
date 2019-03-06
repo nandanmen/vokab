@@ -19,13 +19,12 @@ export default async function translate(
     lang: `${from}-${to}`,
     text
   };
-  try {
-    const res = await http.post(url, null, { params });
-    const translation: Response = res.data.def[0];
-    return parse(translation);
-  } catch (err) {
-    console.error(err);
-  }
+  const res = await http.post(url, null, { params });
+  const translation: Response = res.data.def[0];
+
+  if (!translation) throw new Error("Oops, we can't find that word.");
+
+  return parse(translation);
 }
 
 function parse(res: Response): TranslationInfo {

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, ScrollView, TextInput } from 'react-native';
+import { StyleSheet, View, ScrollView, TextInput, Text } from 'react-native';
 import LanguageOption from './LanguageOption';
 import translate from '../client';
 import { TranslationInfo } from '../client/types';
-import Result from './Result';
 import Results from './Results';
 
 enum Languages {
@@ -17,6 +16,7 @@ interface State {
   language: Languages;
   input: string;
   result?: TranslationInfo;
+  error?: Error;
 }
 
 export default class Translator extends Component<{}, State> {
@@ -26,7 +26,7 @@ export default class Translator extends Component<{}, State> {
   };
 
   public render() {
-    const { result } = this.state;
+    const { result, error } = this.state;
     return (
       <ScrollView
         style={styles.container}
@@ -47,25 +47,35 @@ export default class Translator extends Component<{}, State> {
           style={styles.input}
           placeholder="Type here"
           value={this.state.input}
-          onChangeText={text => this.setState({ input: text })}
+          onChangeText={this._handleTextChange}
           onSubmitEditing={this._handleSubmit}
         />
+        {error ? <Text style={{ color: 'white' }}>{error.message}</Text> : null}
         {result ? <Results translations={result.translations} /> : null}
       </ScrollView>
     );
   }
 
-  private _handleLanguageChange = (idx: number) =>
-    this.setState({ language: LANG_OPTIONS[idx] });
+  private _handleTextChange = (text: string) => {
+    delete this.state.error;
+    this.setState({ input: text });
+  };
 
-  private _handleSubmit = () => {
+  private _handleLanguageChange = (idx: number) => {
+    this.setState({ language: LANG_OPTIONS[idx] });
+  };
+
+  private _handleSubmit = async () => {
     const { language, input } = this.state;
     const to =
       language === Languages.Russian ? Languages.English : Languages.Russian;
 
-    translate(language, to, input)
-      .then(res => this.setState({ result: res }))
-      .catch(err => console.error(err));
+    try {
+      const res = await translate(language, to, input);
+      this.setState({ result: res });
+    } catch (error) {
+      this.setState({ error });
+    }
   };
 }
 
@@ -90,6 +100,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E2',
-    paddingVertical: 15
+    paddingVertical: 15,
+    marginBottom: 15
   }
 });
