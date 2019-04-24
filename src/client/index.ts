@@ -20,8 +20,8 @@ export default async function translate(
     text
   };
   const res = await http.post(url, null, { params });
-  const translation: Response = res.data.def[0];
 
+  const translation: Response = res.data.def[0];
   if (!translation) throw new Error("Oops, we can't find that word.");
 
   return parse(translation);
