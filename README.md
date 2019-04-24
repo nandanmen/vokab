@@ -47,7 +47,7 @@ $ cd russ-vocab && npm install
 Then run `npm start` to launch the dev server. This will generate an output like the following:
 
 <p align="center">
-  <img src="./images/terminal.png" alt="terminal" width="500" />
+  <img src="./images/terminal.png" alt="terminal" width="700" />
 </p>
 
 You can scan the QR code to run the app locally, or type `android` or `ios` to run the corresponding simulators.
