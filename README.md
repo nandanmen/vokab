@@ -1,4 +1,4 @@
-# RussVocab
+# Vokab
 
 <p align="center">
   <img src="./images/main.png" alt="app" width="400" />
